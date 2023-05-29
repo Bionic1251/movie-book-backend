@@ -1,11 +1,8 @@
 import pandas as pd
+import sys
 
-tg_movies = pd.read_csv("./movie_dataset_public_final/scores/tagdl.csv")
-tg_books = pd.read_csv("./book_dataset/scores/tagdl.csv")
+tg_books = pd.read_csv(sys.argv[0])
 
-book_tags = set(tg_books.tag.unique())
-movie_tags = set(tg_movies.tag.unique())
-common_tags = book_tags.intersection(movie_tags)
 book_ids = set(tg_books.item_id.unique())
 
 def get_vector_length(target_item):
