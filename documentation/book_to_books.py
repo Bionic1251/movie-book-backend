@@ -46,8 +46,8 @@ for i in book_ids:
     full_book_len_df = get_item_length_df(tg_books)
     related_book_sim_df = get_sim_df(book_to_books_dot_product, full_book_len_df, target_book_len)
 
-    result =related_book_sim_df.sort_values("sim", ascending=False, ignore_index=True).head(251).drop(columns=["dot_product", "length", "item_id_x"])
-    result["i"] = i
-    result["item_type"] = "book"
-    ordered_result = result[["i", "item_id", "item_type", "sim"]]
-    ordered_result.to_csv("bk_to_bks_updated.csv", mode='a', index=False, header=False)
+    related_book_sim_df["i"] = i
+    related_book_sim_df["item_type"] = "book"
+    related_book_sim_df["target_len"] = target_book_len
+    related_book_sim_df[["i", "item_id", "item_type", "target_len", "length", "dot_product", "sim"]].to_csv(
+        "bk_to_bks_updated.csv", mode='a', index=False, header=False)
