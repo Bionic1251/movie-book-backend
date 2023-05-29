@@ -1,7 +1,7 @@
 import pandas as pd
 import sys
 
-tg_books = pd.read_csv(sys.argv[0])
+tg_books = pd.read_csv(sys.argv[1])
 
 book_ids = set(tg_books.item_id.unique())
 
