@@ -1,12 +1,7 @@
-# This is the updated dot_product to run 251 movies and to write them continuously to the csv file
 import pandas as pd
+import sys
 
-tg_movies = pd.read_csv("./movie_dataset_public_final/scores/tagdl.csv")
-tg_books = pd.read_csv("./book_dataset/scores/tagdl.csv")
-
-book_tags = set(tg_books.tag.unique())
-movie_tags = set(tg_movies.tag.unique())
-common_tags = book_tags.intersection(movie_tags)
+tg_movies = pd.read_csv(sys.argv[1])
 movie_ids = set(tg_movies.item_id.unique())
 
 def get_vector_length(target_item):
@@ -46,8 +41,8 @@ for i in movie_ids:
     full_movie_len_df = get_item_length_df(tg_movies)
     related_movie_sim_df = get_sim_df(movie_to_movies_dot_product, full_movie_len_df, target_movie_len)
 
-    result =related_movie_sim_df.sort_values("sim", ascending=False, ignore_index=True).head(251).drop(columns=["dot_product", "length", "item_id_x"])
-    result["i"] = i
-    result["item_type"] = "movie"
-    ordered_result = result[["i", "item_id", "item_type", "sim"]]
-    ordered_result.to_csv("mv_to_mvs_updated.csv", mode='a', index=False, header=False)
+    related_movie_sim_df["i"] = i
+    related_movie_sim_df["item_type"] = "movie"
+    related_movie_sim_df["target_len"] = target_movie_len
+    related_movie_sim_df[["i", "item_id", "item_type", "target_len", "length", "dot_product", "sim"]].to_csv(
+        "mv_to_mvs_updated.csv", mode='a', index=False, header=False)
