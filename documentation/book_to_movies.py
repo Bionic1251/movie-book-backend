@@ -1,7 +1,8 @@
 import pandas as pd
+import sys
 
-tg_movies = pd.read_csv("./movie_dataset_public_final/scores/tagdl.csv")
-tg_books = pd.read_csv("./book_dataset/scores/tagdl.csv")
+tg_books = pd.read_csv(sys.argv[1])
+tg_movies = pd.read_csv(sys.argv[2])
 
 book_tags = set(tg_books.tag.unique())
 movie_tags = set(tg_movies.tag.unique())
@@ -46,8 +47,8 @@ for i in book_ids:
     related_movies_sim_df = get_sim_df(book_to_movies_dot_product, movie_len_df, target_book_limited_len)
     top10_movies_related_to_book = related_movies_sim_df.sort_values("sim", ascending=False).head(250)
 
-    result = related_movies_sim_df.sort_values("sim", ascending=False, ignore_index=True).head(250).drop(columns=["dot_product", "length", "item_id_x"])
-    result["i"] = i
-    result["item_type"] = "movies"
-    ordered_result = result[["i", "item_id", "item_type", "sim"]]
-    ordered_result.to_csv("bk_to_mvs.csv", mode='a', index=False, header=False)
+    related_movies_sim_df["i"] = i
+    related_movies_sim_df["item_type"] = "movies"
+    related_movies_sim_df["target_len"] = target_book_limited_len
+    related_movies_sim_df = related_movies_sim_df[["i", "item_id", "item_type", "target_len", "length", "dot_product", "sim"]]
+    related_movies_sim_df.to_csv("bk_to_mvs.csv", mode='a', index=False, header=False)
