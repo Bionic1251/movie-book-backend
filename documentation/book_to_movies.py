@@ -35,8 +35,8 @@ def get_sim_df(dot_product_df, len_df, profile_vector_len):
     sim_df["sim"] = sim_df["dot_product"] / sim_df["length"] / profile_vector_len
     return sim_df
 
-full_dataframe = pd.DataFrame(columns=["i", "item_id", "item_type", "sim"])
-full_dataframe.to_csv("bk_to_mvs.csv", index=False)
+#full_dataframe = pd.DataFrame(columns=["i", "item_id", "item_type", "sim"])
+#full_dataframe.to_csv("bk_to_mvs.csv", index=False)
 
 for i in book_ids:
     print(i)
