@@ -78,12 +78,5 @@ for i in ids:
     related_items_sim_df["item_id1"] = related_items_sim_df.item_id_marked1.apply(parse_id).astype(int)
     related_items_sim_df["item_id2"] = related_items_sim_df.item_id_marked2.apply(parse_id).astype(int)
 
-    #repeating records
-    related_items_sim_df_copy = related_items_sim_df.copy()
-    related_items_sim_df_copy = related_items_sim_df_copy.rename(
-        columns={"item_id_marked1": "item_id_marked2", "item_id1": "item_id2", "length1": "length2", "type1": "type2",
-                 "item_id_marked2": "item_id_marked1", "item_id2": "item_id1", "length2": "length1", "type2": "type1"})
-    item_sim_df = pd.concat([related_items_sim_df, related_items_sim_df_copy])
-
-    item_sim_df[['item_id_marked1', 'item_id1', 'type1', 'length1', 'item_id_marked2', 'item_id2', 'type2', 'length2',
+    related_items_sim_df[['item_id_marked1', 'item_id1', 'type1', 'length1', 'item_id_marked2', 'item_id2', 'type2', 'length2',
                  'dot_product', 'sim']].to_csv("item_to_item_sim.csv", mode='a', index=False, header=False)
