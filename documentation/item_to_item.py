@@ -1,5 +1,13 @@
 import pandas as pd
 import sys
+import psycopg2
+
+conn = psycopg2.connect(
+    host="",
+    database="",
+    user="",
+    password="")
+cur = conn.cursor()
 
 tg_books = pd.read_csv(sys.argv[1])
 tg_movies = pd.read_csv(sys.argv[2])
@@ -78,5 +86,15 @@ for i in ids:
     related_items_sim_df["item_id1"] = related_items_sim_df.item_id_marked1.apply(parse_id).astype(int)
     related_items_sim_df["item_id2"] = related_items_sim_df.item_id_marked2.apply(parse_id).astype(int)
 
-    related_items_sim_df[['item_id_marked1', 'item_id1', 'type1', 'length1', 'item_id_marked2', 'item_id2', 'type2', 'length2',
-                 'dot_product', 'sim']].to_csv("item_to_item_sim.csv", mode='a', index=False, header=False)
+    for index, row in related_items_sim_df[
+        ['item_id_marked1', 'item_id1', 'type1', 'length1', 'item_id_marked2', 'item_id2', 'type2', 'length2',
+         'dot_product', 'sim']].iterrows():
+        cur.execute(
+            "insert into item_item (item_id_marked1, item_id1, type1, length1, item_id_marked2, item_id2, type2, length2, dot_product, sim) values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
+            list(row))
+    conn.commit()
+    
+    #related_items_sim_df[['item_id_marked1', 'item_id1', 'type1', 'length1', 'item_id_marked2', 'item_id2', 'type2', 'length2',
+    #             'dot_product', 'sim']].to_csv("item_to_item_sim.csv", mode='a', index=False, header=False)
+
+conn.close()
