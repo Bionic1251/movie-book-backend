@@ -184,6 +184,7 @@ class Recommendations:
             which includes corresponding lists of recommended item ID's.
         """
 
+        print("Ratings for recs:", ratings)
         if self.data_uploaded is False:
             print("data is not yet uploaded")
             self.get_data()

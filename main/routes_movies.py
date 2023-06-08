@@ -438,7 +438,6 @@ def get_personal_recommendations():
     Returns:
         json: data is returned in json format.
     """
-    start = timer()
 
     response = jsonify({'value': 'not available'})
     if request.args['ratings'] != '':
@@ -450,7 +449,11 @@ def get_personal_recommendations():
     else:
         ratings = DEFAUL_RATINGS
 
+    start = timer()
     results = recommendations.get_all_recommendations(ratings, 20)
+    end = timer()
+    print("Recommendation calculation time:", end - start, "sec")
+
     movie_values = []
     for result in results["movies"]:
         value = TableMovieTmdbDataFull.query \
@@ -473,7 +476,5 @@ def get_personal_recommendations():
 
     response = jsonify(all_values_dict)
 
-    end = timer()
-    print("Calculation time:", end - start, "sec")
     response.headers.add('Access-Control-Allow-Origin', '*')
     return response
