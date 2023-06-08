@@ -12,6 +12,9 @@ from main.movies import TableMovieTmdbDataFull, TableMvMetadataUpdated, TableMvT
 from main.books import TableBkMetadata
 from main.helper import helper
 from main.recommendations import recommendations
+from timeit import default_timer as timer
+
+DEFAUL_RATINGS = {'movies': [], 'books': [{'item_id': 4640799, 'rating': 5}]}
 
 @app.route('/dbgettags', methods = ['GET'])
 def gettablevalues():
@@ -435,38 +438,42 @@ def get_personal_recommendations():
     Returns:
         json: data is returned in json format.
     """
+    start = timer()
+
     response = jsonify({'value': 'not available'})
     if request.args['ratings'] != '':
         cookie_raw = request.args['ratings']
         cookie = json.loads(cookie_raw)
         ratings = helper.ratings_helper(cookie)
         if ratings is False:
-            response = jsonify({'value': 'not available'})
-        else:
-            results = recommendations.get_all_recommendations(ratings, 20)
-            movie_values = []
-            for result in results["movies"]:
-                value = TableMovieTmdbDataFull.query \
-                        .filter_by(movie_tmdb_data_full_movieid = result).first()
-                movie_values.append(value)
-
-            movie_values_dict = helper.dict_helper(movie_values)
-
-            book_values = []
-            for result in results["books"]:
-                value = TableBkMetadata.query \
-                        .filter_by(bk_metadata_item_id = result).first()
-                book_values.append(value)
-
-            book_values_dict = helper.dict_helper(book_values)
-
-            all_values_dict = {}
-            all_values_dict["movies"] = movie_values_dict
-            all_values_dict["books"] = book_values_dict
-
-            response = jsonify(all_values_dict)
+            ratings = DEFAUL_RATINGS
     else:
-        response = jsonify({'value': 'not available'})
+        ratings = DEFAUL_RATINGS
 
+    results = recommendations.get_all_recommendations(ratings, 20)
+    movie_values = []
+    for result in results["movies"]:
+        value = TableMovieTmdbDataFull.query \
+                .filter_by(movie_tmdb_data_full_movieid = result).first()
+        movie_values.append(value)
+
+    movie_values_dict = helper.dict_helper(movie_values)
+
+    book_values = []
+    for result in results["books"]:
+        value = TableBkMetadata.query \
+                .filter_by(bk_metadata_item_id = result).first()
+        book_values.append(value)
+
+    book_values_dict = helper.dict_helper(book_values)
+
+    all_values_dict = {}
+    all_values_dict["movies"] = movie_values_dict
+    all_values_dict["books"] = book_values_dict
+
+    response = jsonify(all_values_dict)
+
+    end = timer()
+    print("Calculation time:", end - start, "sec")
     response.headers.add('Access-Control-Allow-Origin', '*')
     return response
